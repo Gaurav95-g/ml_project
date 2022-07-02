@@ -45,7 +45,7 @@ git push origin main
 
 to setup CI/CD pipeline iin heroku we need 3 requirements
 1. HEROKU_EMAIL: gaurav.g95garg@gmail.com
-2. HEROKU_API_KEY:c0754491-b34e-47ab-8eff-ff5383c538f0
+2. HEROKU_API_KEY:
 3. APP_NAME:first-ml
 
 BUILD DOCKER IMAGE
