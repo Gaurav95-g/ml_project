@@ -1,16 +1,25 @@
-from housing.constant import CONFIG_FILE_PATH, CURRENT_TIME_STAMP
-from housing.entity.config_entity import DataIngestionConfig,DataValidationConfig, DataTransformationConfig, ModelEvaluationConfig, ModelPusherConfig, ModelTrainerConfig, TrainingPipelineConfig
-
-
+from housing.entity.config_entity import DataIngestionConfig, DataTransformationConfig,DataValidationConfig,   \
+ModelTrainerConfig,ModelEvaluationConfig,ModelPusherConfig,TrainingPipelineConfig
+from housing.util.util import read_yaml_file
+from housing.logger import logging
+import sys,os
+from housing.constant import *
+from housing.exception import HousingException
 
 
 
 class Configuration:
 
     def __init__(self,
-        config_file_path:str=CONFIG_FILE_PATH,
-        current_time_stamp:str=CURRENT_TIME_STAMP) -> None:
-        pass
+        config_file_path:str =CONFIG_FILE_PATH,
+        current_time_stamp:str = CURRENT_TIME_STAMP
+        ) -> None:
+        try:
+            self.config_info  = read_yaml_file(file_path=config_file_path)
+            self.training_pipeline_config = self.get_training_pipeline_config()
+            self.time_stamp = current_time_stamp
+        except Exception as e:
+            raise HousingException(e,sys) from e
 
     def get_data_ingestion_congif(self) -> DataIngestionConfig:
         pass
@@ -31,4 +40,14 @@ class Configuration:
         pass
 
     def get_traning_pipeline_config(self) -> TrainingPipelineConfig:
-        pass
+        try:
+            traning_pipeline_config= self.config_info[TRANING_PIPELINE_CONFIG_KEY]
+            artifact_dir= os.path.join(ROOT_DIR,
+            traning_pipeline_config[TRANING_PIPELINE_NAME_KEY],
+            traning_pipeline_config[TRANING_PIPELINE_ARTIFACT_DIR_KEY])
+
+            traning_pipeline_config=TrainingPipelineConfig(artifact_dir=artifact_dir)
+            logging.info(f"Traning_pipeline_config: {traning_pipeline_config}")
+            return traning_pipeline_config
+        except Exception as e:
+            raise HousingException(e,sys) from e
